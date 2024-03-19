@@ -6,10 +6,10 @@ using System;
 
 namespace Miosuke;
 
-public class PluginHotkey
+public class Hotkey
 {
     // -------------------------------- hotkey methods --------------------------------
-    public static bool CheckHotkeyState(VirtualKey[] keys)
+    public static bool IsActive(VirtualKey[] keys)
     {
         foreach (var vk in Service.KeyState.GetValidVirtualKeys())
         {
