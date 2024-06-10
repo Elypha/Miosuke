@@ -10,16 +10,11 @@ public class Hotkey
     // -------------------------------- hotkey methods --------------------------------
     public static bool IsActive(VirtualKey[] keys)
     {
-        foreach (var vk in Service.KeyState.GetValidVirtualKeys())
+        foreach (var vk in keys)
         {
-            if (keys.Contains(vk))
-            {
-                if (!Service.KeyState[vk]) return false;
-            }
-            else
-            {
-                if (Service.KeyState[vk]) return false;
-            }
+            if (!Service.KeyState.IsVirtualKeyValid(vk)) continue;
+
+            if (!Service.KeyState[vk]) return false;
         }
         return true;
     }
