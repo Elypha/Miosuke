@@ -8,7 +8,7 @@ public class MiosukeHelper
     public IDalamudPlugin Plugin { get; private set; } = null!;
 
 
-    public MiosukeHelper(DalamudPluginInterface pluginInterface, IDalamudPlugin plugin)
+    public MiosukeHelper(IDalamudPluginInterface pluginInterface, IDalamudPlugin plugin)
     {
         pluginInterface.Create<Service>();
         Plugin = plugin;
