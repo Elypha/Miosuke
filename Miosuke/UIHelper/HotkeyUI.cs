@@ -6,7 +6,6 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,36 +13,41 @@ using System.Net;
 using System.Numerics;
 using System.Text.Json;
 using System.Text;
+using Miosuke;
 using System.Threading.Tasks;
 using System;
 
 namespace Miosuke;
 
-public class ConfigUiHotkey(VirtualKey[] userConfigHotkey, System.Action saveConfig)
+public class HotkeyUi
 {
+    public HotkeyUi()
+    {
+    }
+
     public void Dispose()
     {
     }
 
     // -------------------------------- module --------------------------------
-    private bool doSetInputFocused = false;
-    private bool isEditingHotkey = false;
-    private bool isInputActive = false;
-    public List<VirtualKey> UserHotkeyList = [];
-    public string UserHotkeyString = "";
+    public bool doSetInputFocused = false;
+    public bool isEditingHotkey = false;
+    public bool isInputActive = false;
+    public List<VirtualKey> userHotkeyList = [];
+    public string userHotkeyString = "";
+    public bool isHotkeyChanged = false;
 
-
-    public void DrawConfigUi(string uniqueName, uint inputWidth = 150)
+    public bool DrawConfigUi(string uniqueName, ref VirtualKey[] hotkey, uint inputWidth = 150)
     {
         // get user hotkey
-        UserHotkeyString = GetHotkeyString(userConfigHotkey);
+        userHotkeyString = GetHotkeyString(hotkey);
 
         // update user hotkey from user input
         if (isEditingHotkey)
         {
-            if (ImGui.GetIO().KeyAlt && !UserHotkeyList.Contains(VirtualKey.MENU)) UserHotkeyList.Add(VirtualKey.MENU);
-            if (ImGui.GetIO().KeyShift && !UserHotkeyList.Contains(VirtualKey.SHIFT)) UserHotkeyList.Add(VirtualKey.SHIFT);
-            if (ImGui.GetIO().KeyCtrl && !UserHotkeyList.Contains(VirtualKey.CONTROL)) UserHotkeyList.Add(VirtualKey.CONTROL);
+            if (ImGui.GetIO().KeyAlt && !userHotkeyList.Contains(VirtualKey.MENU)) userHotkeyList.Add(VirtualKey.MENU);
+            if (ImGui.GetIO().KeyShift && !userHotkeyList.Contains(VirtualKey.SHIFT)) userHotkeyList.Add(VirtualKey.SHIFT);
+            if (ImGui.GetIO().KeyCtrl && !userHotkeyList.Contains(VirtualKey.CONTROL)) userHotkeyList.Add(VirtualKey.CONTROL);
 
             for (var i = 0; i < ImGui.GetIO().KeysDown.Count && i < 160; i++)
             {
@@ -53,19 +57,20 @@ public class ConfigUiHotkey(VirtualKey[] userConfigHotkey, System.Action saveCon
 
                     if (vkey == VirtualKey.ESCAPE)
                     {
-                        CancelEdit();
+                        // cancel editing
+                        isEditingHotkey = false;
                         break;
                     }
 
-                    if (!UserHotkeyList.Contains(vkey))
+                    if (!userHotkeyList.Contains(vkey))
                     {
-                        UserHotkeyList.Add(vkey);
+                        userHotkeyList.Add(vkey);
                     }
                 }
             }
 
-            UserHotkeyList.Sort();
-            UserHotkeyString = GetHotkeyString(UserHotkeyList);
+            userHotkeyList.Sort();
+            userHotkeyString = GetHotkeyString(userHotkeyList);
         }
 
         // draw hotkey input bar
@@ -77,23 +82,32 @@ public class ConfigUiHotkey(VirtualKey[] userConfigHotkey, System.Action saveCon
         {
             if (ImGui.Button($"Edit##{uniqueName}-button-edit"))
             {
-                StartEdit();
+                // start editing
+                isEditingHotkey = true;
+                userHotkeyList = [];
             }
         }
         else
         {
-            if (UserHotkeyList.Count > 0)
+            if (userHotkeyList.Count > 0)
             {
+                // save and stop editing
                 if (ImGui.Button($"Save##{uniqueName}-button-save"))
                 {
-                    SaveEdit();
+                    isEditingHotkey = false;
+                    if (userHotkeyList.Count > 0)
+                    {
+                        isHotkeyChanged = true;
+                        hotkey = [.. userHotkeyList];
+                    }
                 }
             }
             else
             {
+                // if no hotkey, show cancel button, cancel editing
                 if (ImGui.Button($"Cancel##{uniqueName}-button-cancel"))
                 {
-                    CancelEdit();
+                    isEditingHotkey = false;
                 }
             }
         }
@@ -108,9 +122,20 @@ public class ConfigUiHotkey(VirtualKey[] userConfigHotkey, System.Action saveCon
         ImGuiComponents.HelpMarker(
             "Click 'Edit' to set a new hotkey.\nClick 'Save' or a blank area to save.\nPress ESC on your keyboard to cancel."
         );
+
+        // if changed, return true
+        if (isHotkeyChanged)
+        {
+            isHotkeyChanged = false;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    private void DrawHotkeyInput(string uniqueName, uint inputWidth)
+    public void DrawHotkeyInput(string uniqueName, uint inputWidth)
     {
         // set style
         if (isEditingHotkey)
@@ -120,7 +145,7 @@ public class ConfigUiHotkey(VirtualKey[] userConfigHotkey, System.Action saveCon
         }
 
         ImGui.SetNextItemWidth(inputWidth);
-        ImGui.InputText($"##{uniqueName}-input-hotkey", ref UserHotkeyString, 100, ImGuiInputTextFlags.ReadOnly);
+        ImGui.InputText($"##{uniqueName}-input-hotkey", ref userHotkeyString, 100, ImGuiInputTextFlags.ReadOnly);
 
         // set focus when required
         if (doSetInputFocused)
@@ -136,30 +161,6 @@ public class ConfigUiHotkey(VirtualKey[] userConfigHotkey, System.Action saveCon
             ImGui.PopStyleColor(1);
             ImGui.PopStyleVar();
         }
-    }
-
-    private void StartEdit()
-    {
-        isEditingHotkey = true;
-    }
-
-    private void SaveEdit()
-    {
-        isEditingHotkey = false;
-
-        if (UserHotkeyList.Count > 0) userConfigHotkey = [.. UserHotkeyList];
-        saveConfig();
-
-        UserHotkeyList.Clear();
-        Service.PluginLog.Info($"Hotkey set to {GetHotkeyString(userConfigHotkey)}");
-    }
-
-    private void CancelEdit()
-    {
-        isEditingHotkey = false;
-
-        UserHotkeyList.Clear();
-        Service.PluginLog.Info("Hotkey edit cancelled");
     }
 
     public static string GetHotkeyString(IEnumerable<VirtualKey> hotkey)
