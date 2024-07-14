@@ -12,9 +12,9 @@ public class Hotkey
     public static List<VirtualKey> GetActiveKeys()
     {
         var activeKeys = new List<VirtualKey>();
-        foreach (var vk in Svc.KeyState.GetValidVirtualKeys())
+        foreach (var vk in Service.KeyState.GetValidVirtualKeys())
         {
-            if (Svc.KeyState[vk]) activeKeys.Add(vk);
+            if (Service.KeyState[vk]) activeKeys.Add(vk);
         }
         return activeKeys;
     }
@@ -24,9 +24,9 @@ public class Hotkey
         // check if all keys are active
         foreach (var vk in keys)
         {
-            if (!Svc.KeyState.IsVirtualKeyValid(vk)) continue;
+            if (!Service.KeyState.IsVirtualKeyValid(vk)) continue;
 
-            if (!Svc.KeyState[vk]) return false;
+            if (!Service.KeyState[vk]) return false;
         }
 
         // if strict, check if all active keys are in the list

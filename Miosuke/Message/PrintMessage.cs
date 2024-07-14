@@ -16,14 +16,14 @@ public class PrintMessage
 
         if (channel == XivChatType.None)
         {
-            Svc.Chat.Print(new XivChatEntry
+            Service.Chat.Print(new XivChatEntry
             {
                 Message = new SeString(prefix.Concat(payloadList).ToList()),
             });
         }
         else
         {
-            Svc.Chat.Print(new XivChatEntry
+            Service.Chat.Print(new XivChatEntry
             {
                 Message = new SeString(prefix.Concat(payloadList).ToList()),
                 Type = channel,
@@ -35,14 +35,14 @@ public class PrintMessage
     {
         if (channel == XivChatType.None)
         {
-            Svc.Chat.Print(new XivChatEntry
+            Service.Chat.Print(new XivChatEntry
             {
                 Message = new SeString(payloadList),
             });
         }
         else
         {
-            Svc.Chat.Print(new XivChatEntry
+            Service.Chat.Print(new XivChatEntry
             {
                 Message = new SeString(payloadList),
                 Type = channel,
@@ -67,6 +67,6 @@ public class PrintMessage
     // -------------------------------- [  toast  ] --------------------------------
     public static void ToastNormal(string text)
     {
-        Svc.Toasts.ShowNormal(text);
+        Service.Toasts.ShowNormal(text);
     }
 }

@@ -11,7 +11,7 @@ namespace Miosuke;
 
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
 
-public class Svc {
+public class Service {
     [PluginService] public static IDalamudPluginInterface PluginInterface { get; private set; }
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; private set; }
     [PluginService] public static IChatGui Chat { get; private set; }
