@@ -7,7 +7,6 @@ using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
-using Miosuke;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System;
 
-namespace Meteion;
+namespace Miosuke;
 
 public class ConfigUiHotkey(VirtualKey[] userConfigHotkey, System.Action saveConfig)
 {
