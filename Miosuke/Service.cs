@@ -6,7 +6,7 @@ using Dalamud.Plugin.Services;
 
 namespace Miosuke;
 
-public class Service
+public class Svc
 {
     [PluginService] public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; private set; } = null!;

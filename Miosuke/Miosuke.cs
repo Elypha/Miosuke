@@ -10,7 +10,7 @@ public class MiosukeHelper
 
     public MiosukeHelper(IDalamudPluginInterface pluginInterface, IDalamudPlugin plugin)
     {
-        pluginInterface.Create<Service>();
+        pluginInterface.Create<Svc>();
         Plugin = plugin;
     }
 
