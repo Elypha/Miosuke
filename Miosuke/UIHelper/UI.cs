@@ -10,14 +10,19 @@ namespace Miosuke.UiHelper;
 
 public class Ui
 {
+    // titles
     public static readonly Vector4 ColourTitle = HslaToDecimal(25, 0.75, 0.85, 1.0);
     public static readonly Vector4 ColourSubtitle = HslaToDecimal(175, 0.5, 0.75, 1.0);
     public static readonly Vector4 ColourText = HslaToDecimal(0, 0.0, 0.95, 1.0);
 
+    // colours
     public static readonly Vector4 ColourCyan = HslaToDecimal(200, 0.85, 0.6, 1.0);
     public static readonly Vector4 ColourRedLight = HslaToDecimal(5, 0.75, 0.6, 1.0);
     public static readonly Vector4 ColourWhite = HslaToDecimal(0, 0, 1.0, 1.0);
     public static readonly Vector4 ColourKhaki = HslaToDecimal(25, 0.65, 0.75, 1.0);
+
+    // ffxiv colours
+    public static readonly Vector4 ColourHq = HslaToDecimal(45, 0.80, 0.70, 1.0);
 
 
     // IMGUI SHORTCUTS
