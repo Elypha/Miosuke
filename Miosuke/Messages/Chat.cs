@@ -9,57 +9,35 @@ namespace Miosuke.Messages;
 
 public class Chat
 {
-    // -------------------------------- [  chat  ] --------------------------------
-    public static void Print(XivChatType channel, string prefixText, ushort? colour, List<Payload> payloadList)
-    {
-        var prefix = TextColoured(prefixText, colour ?? 557);
+    private static readonly ushort orangeColourKey = 557;
 
-        if (channel == XivChatType.None)
-        {
-            Service.Chat.Print(new XivChatEntry
-            {
-                Message = new SeString(prefix.Concat(payloadList).ToList()),
-            });
-        }
-        else
-        {
-            Service.Chat.Print(new XivChatEntry
-            {
-                Message = new SeString(prefix.Concat(payloadList).ToList()),
-                Type = channel,
-            });
-        }
-    }
-
-    public static void Print(XivChatType channel, List<Payload> payloadList)
+    public static void PluginMessage(XivChatType channel, string prefix, DalamudLinkPayload? prefixPayload, ushort? prefixColourKey, List<Payload> payloadList)
     {
-        if (channel == XivChatType.None)
-        {
-            Service.Chat.Print(new XivChatEntry
-            {
-                Message = new SeString(payloadList),
-            });
-        }
-        else
-        {
-            Service.Chat.Print(new XivChatEntry
-            {
-                Message = new SeString(payloadList),
-                Type = channel,
-            });
-        }
-    }
-
-    /// <summary>
-    /// A text with foreground colour. See available colours via /xldata.
-    /// </summary>
-    /// <returns>A List of Dalamud.Game.Text.SeStringHandling.Payload</returns>
-    public static List<Payload> TextColoured(string text, ushort colour)
-    {
-        return new List<Payload> {
-            new UIForegroundPayload(colour),
-            new TextPayload(text),
+        var payloads = new List<Payload> {
+            new UIForegroundPayload(prefixColourKey ?? orangeColourKey),
+            new TextPayload($"[{prefix}]"),
             new UIForegroundPayload(0),
         };
+
+        if (prefixPayload is not null)
+        {
+            payloads.Insert(1, prefixPayload);
+            payloads.Insert(3, RawPayload.LinkTerminator);
+        }
+
+        Service.Chat.Print(new XivChatEntry
+        {
+            Message = new SeString(payloads.Concat(payloadList).ToList()),
+            Type = channel,
+        });
+    }
+
+    public static void Message(XivChatType channel, List<Payload> payloadList)
+    {
+        Service.Chat.Print(new XivChatEntry
+        {
+            Message = new SeString(payloadList),
+            Type = channel,
+        });
     }
 }

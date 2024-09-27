@@ -9,11 +9,7 @@ namespace Miosuke.Action;
 public static class Hotkey
 {
     private static readonly List<VirtualKey> ValidVirtualKeys = Service.KeyState.GetValidVirtualKeys().ToList();
-
-    public static IEnumerable<VirtualKey> ActiveKeys()
-    {
-        return ValidVirtualKeys.Where(vk => Service.KeyState[vk]);
-    }
+    public static IEnumerable<VirtualKey> ActiveKeys() { return ValidVirtualKeys.Where(vk => Service.KeyState[vk]); }
 
     public static bool IsActive(VirtualKey[] keys, bool strict = false)
     {
@@ -21,10 +17,8 @@ public static class Hotkey
         foreach (var vk in keys)
         {
             if (!Service.KeyState.IsVirtualKeyValid(vk)) continue;
-
             if (!Service.KeyState[vk]) return false;
         }
-
         // if strict, check if all active keys are in the list
         if (strict)
         {
@@ -33,7 +27,6 @@ public static class Hotkey
                 if (!keys.Contains(vk)) return false;
             }
         }
-
         return true;
     }
 }

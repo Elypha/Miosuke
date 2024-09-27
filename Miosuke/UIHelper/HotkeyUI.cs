@@ -6,6 +6,8 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
+using Miosuke.Action;
+using Miosuke;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +15,6 @@ using System.Net;
 using System.Numerics;
 using System.Text.Json;
 using System.Text;
-using Miosuke;
 using System.Threading.Tasks;
 using System;
 
@@ -120,7 +121,9 @@ public class HotkeyUi
 
         ImGui.SameLine();
         ImGuiComponents.HelpMarker(
-            "Click 'Edit' to set a new hotkey.\nClick 'Save' or a blank area to save.\nPress ESC on your keyboard to cancel."
+            "Click 'Edit' to set a new hotkey.\n" +
+            "Click 'Save' or a blank area to save.\n" +
+            "Press ESC on your keyboard to cancel."
         );
 
         // if changed, return true
