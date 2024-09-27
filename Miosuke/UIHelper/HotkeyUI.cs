@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace Miosuke.UIHelper;
+namespace Miosuke.UiHelper;
 
 public class HotkeyUi
 {
@@ -126,7 +126,7 @@ public class HotkeyUi
         }
     }
 
-    public void DrawHotkeyInput(string uniqueName, uint inputWidth)
+    private void DrawHotkeyInput(string uniqueName, uint inputWidth)
     {
         // set style
         if (isEditingHotkey)
@@ -154,7 +154,7 @@ public class HotkeyUi
         }
     }
 
-    public static string GetHotkeyString(IEnumerable<VirtualKey> hotkey)
+    private static string GetHotkeyString(IEnumerable<VirtualKey> hotkey)
     {
         return string.Join("+", hotkey.Select(k => k.GetKeyName()));
     }

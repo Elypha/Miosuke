@@ -6,72 +6,21 @@ using System.Collections.Generic;
 using System.Numerics;
 
 
-namespace Miosuke.UIHelper;
+namespace Miosuke.UiHelper;
 
-public class UI
+public class Ui
 {
-    // -------------------------------- ImGui utils --------------------------------
-    public static readonly Vector4 titleColour = HSLA_to_Decimal(25, 0.65, 0.75, 1.0);
-    public static readonly Vector4 textColour = HSLA_to_Decimal(0, 0.0, 0.95, 1.0);
-    public static readonly Vector4 textColourDim = HSLA_to_Decimal(0, 0.0, 0.6, 1.0);
-    public static readonly Vector4 ColourHq = HSLA_to_Decimal(40, 0.9, 0.7, 1.0);
+    public static readonly Vector4 ColourTitle = HslaToDecimal(25, 0.75, 0.85, 1.0);
+    public static readonly Vector4 ColourSubtitle = HslaToDecimal(175, 0.5, 0.75, 1.0);
+    public static readonly Vector4 ColourText = HslaToDecimal(0, 0.0, 0.95, 1.0);
 
-    public static readonly Vector4 bulletTitleColour = HSLA_to_Decimal(35, 0.75, 0.75, 1.0);
-    public static readonly Vector4 bulletListColour = HSLA_to_Decimal(0, 0.0, 0.8, 1.0);
-
-    public static readonly Vector4 ColourTitle = HSLA_to_Decimal(25, 0.75, 0.85, 1.0);
-    public static readonly Vector4 ColourSubtitle = HSLA_to_Decimal(175, 0.5, 0.75, 1.0);
-    public static readonly Vector4 ColourText = HSLA_to_Decimal(0, 0.0, 0.95, 1.0);
-
-    public static readonly Vector4 ColourCyan = HSLA_to_Decimal(200, 0.85, 0.6, 1.0);
-    public static readonly Vector4 ColourRedLight = HSLA_to_Decimal(5, 0.75, 0.6, 1.0);
-    public static readonly Vector4 ColourWhite = HSLA_to_Decimal(0, 0, 1.0, 1.0);
-    public static readonly Vector4 ColourKhaki = HSLA_to_Decimal(25, 0.65, 0.75, 1.0);
+    public static readonly Vector4 ColourCyan = HslaToDecimal(200, 0.85, 0.6, 1.0);
+    public static readonly Vector4 ColourRedLight = HslaToDecimal(5, 0.75, 0.6, 1.0);
+    public static readonly Vector4 ColourWhite = HslaToDecimal(0, 0, 1.0, 1.0);
+    public static readonly Vector4 ColourKhaki = HslaToDecimal(25, 0.65, 0.75, 1.0);
 
 
-    public static void BulletTextList(string title, string? description, List<string> list)
-    {
-
-        ImGui.TextColored(bulletTitleColour, title);
-
-        if (description is not null)
-        {
-            ImGui.SameLine();
-            ImGuiComponents.HelpMarker(description);
-        }
-
-        ImGui.Indent();
-
-        ImGui.PushTextWrapPos();
-        ImGui.PushStyleColor(ImGuiCol.Text, bulletListColour);
-        foreach (var text in list)
-        {
-            ImGui.Text(text);
-        }
-        ImGui.PopStyleColor();
-        ImGui.PopTextWrapPos();
-
-        ImGui.Unindent();
-    }
-
-    public static void ChangelogList(string title, List<string> list)
-    {
-        ImGui.TextColored(titleColour, title);
-        ImGui.Separator();
-        ImGui.Indent();
-
-        ImGui.PushTextWrapPos();
-        ImGui.PushStyleColor(ImGuiCol.Text, textColour);
-        foreach (var text in list)
-        {
-            ImGui.Text(text);
-        }
-        ImGui.PopStyleColor();
-        ImGui.PopTextWrapPos();
-
-        ImGui.Unindent();
-        ImGui.Text("");
-    }
+    // IMGUI SHORTCUTS
 
     public static void AlignRight(string text)
     {
@@ -84,7 +33,8 @@ public class UI
     }
 
 
-    // -------------------------------- ffxiv utils --------------------------------
+    // FFXIV HELPERS
+
     public static void RenderSeString(SeString seString)
     {
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetStyle().ItemSpacing.X);
@@ -102,19 +52,17 @@ public class UI
             {
                 if (uiForegroundPayload.IsEnabled)
                 {
-                    ImGui.PushStyleColor(ImGuiCol.Text, Colour_uint_to_Decimal(uiForegroundPayload.UIColor.UIForeground));
+                    ImGui.PushStyleColor(ImGuiCol.Text, ColourUintToDecimal(uiForegroundPayload.UIColor.UIForeground));
                 }
                 else
                 {
                     ImGui.PopStyleColor();
                 }
             }
-            // else if (payload is UIGlowPayload uiGlowPayload)
-            // {
-            // }
         }
     }
-    private static Vector4 Colour_uint_to_Decimal(uint color)
+
+    private static Vector4 ColourUintToDecimal(uint color)
     {
         var r = (byte)(color >> 24);
         var g = (byte)(color >> 16);
@@ -125,11 +73,12 @@ public class UI
     }
 
 
-    // -------------------------------- colour utils --------------------------------
+    // COLOUR
+
     /// <summary>
     /// (255, 255, 255, 1) -> (1, 1, 1, 1)
     /// </summary>
-    public static Vector4 RGBA_to_Decimal(byte r, byte g, byte b, byte a)
+    public static Vector4 RgbaToDecimal(byte r, byte g, byte b, byte a)
     {
         return new Vector4(r / 255f, g / 255f, b / 255f, a / 1f);
     }
@@ -137,16 +86,16 @@ public class UI
     /// <summary>
     /// (360, 1, 1, 1) -> (1, 1, 1, 1)
     /// </summary>
-    public static Vector4 HSLA_to_Decimal(double h, double s, double l, double a = 1.0)
+    public static Vector4 HslaToDecimal(double h, double s, double l, double a = 1.0)
     {
-        var rgba = HSLA_to_RGBA(h, s, l, a);
+        var rgba = HslaToRgba(h, s, l, a);
         return new Vector4(rgba.X / 255f, rgba.Y / 255f, rgba.Z / 255f, rgba.W / 1f);
     }
 
     /// <summary>
     /// (360, 1, 1, 1) -> (255, 255, 255, 1)
     /// </summary>
-    public static Vector4 HSLA_to_RGBA(double h, double s, double l, double a = 1.0)
+    public static Vector4 HslaToRgba(double h, double s, double l, double a = 1.0)
     {
         double v;
         double r, g, b;
