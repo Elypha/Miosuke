@@ -15,7 +15,7 @@ public class Chat
     {
         var payloads = new List<Payload> {
             new UIForegroundPayload(prefixColourKey ?? orangeColourKey),
-            new TextPayload($"[{prefix}]"),
+            new TextPayload(prefix),
             new UIForegroundPayload(0),
         };
 
