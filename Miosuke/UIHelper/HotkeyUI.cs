@@ -1,24 +1,12 @@
 using Dalamud.Game.ClientState.Keys;
-using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Game.Text;
 using Dalamud.Interface.Components;
-using Dalamud.Interface.Windowing;
-using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
 using Miosuke.Action;
-using Miosuke;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Numerics;
-using System.Text.Json;
-using System.Text;
-using System.Threading.Tasks;
-using System;
 
-namespace Miosuke;
+
+namespace Miosuke.UIHelper;
 
 public class HotkeyUi
 {

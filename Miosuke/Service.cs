@@ -1,6 +1,5 @@
 #pragma warning disable CS8618
 
-using System.Diagnostics.CodeAnalysis;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.IoC;
@@ -8,8 +7,6 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 namespace Miosuke;
-
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
 
 public class Service
 {

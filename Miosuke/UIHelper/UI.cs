@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Numerics;
 
 
-namespace Miosuke;
+namespace Miosuke.UIHelper;
 
 public class UI
 {
