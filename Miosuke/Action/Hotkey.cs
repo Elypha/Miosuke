@@ -4,19 +4,15 @@ using System.Linq;
 using System;
 
 
-namespace Miosuke;
+namespace Miosuke.Action;
 
-public class Hotkey
+public static class Hotkey
 {
-    // -------------------------------- hotkey methods --------------------------------
-    public static List<VirtualKey> GetActiveKeys()
+    private static readonly List<VirtualKey> ValidVirtualKeys = Service.KeyState.GetValidVirtualKeys().ToList();
+
+    public static IEnumerable<VirtualKey> ActiveKeys()
     {
-        var activeKeys = new List<VirtualKey>();
-        foreach (var vk in Service.KeyState.GetValidVirtualKeys())
-        {
-            if (Service.KeyState[vk]) activeKeys.Add(vk);
-        }
-        return activeKeys;
+        return ValidVirtualKeys.Where(vk => Service.KeyState[vk]);
     }
 
     public static bool IsActive(VirtualKey[] keys, bool strict = false)
@@ -32,7 +28,7 @@ public class Hotkey
         // if strict, check if all active keys are in the list
         if (strict)
         {
-            foreach (var vk in GetActiveKeys())
+            foreach (var vk in ActiveKeys())
             {
                 if (!keys.Contains(vk)) return false;
             }

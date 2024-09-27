@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace Miosuke;
+namespace Miosuke.Messages;
 
 public class PrintMessage
 {
