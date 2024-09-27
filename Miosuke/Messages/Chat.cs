@@ -11,7 +11,7 @@ public class Chat
 {
     private static readonly ushort orangeColourKey = 557;
 
-    public static void PluginMessage(XivChatType channel, string prefix, DalamudLinkPayload? prefixPayload, ushort? prefixColourKey, List<Payload> payloadList)
+    public static void PluginMessage(XivChatType channel, string prefix, List<Payload> payloadList, DalamudLinkPayload? prefixPayload = null, ushort? prefixColourKey = null)
     {
         var payloads = new List<Payload> {
             new UIForegroundPayload(prefixColourKey ?? orangeColourKey),
