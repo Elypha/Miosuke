@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace Miosuke.Messages;
 
-public class PrintMessage
+public class Chat
 {
     // -------------------------------- [  chat  ] --------------------------------
-    public static void Chat(XivChatType channel, string prefixText, ushort? colour, List<Payload> payloadList)
+    public static void Print(XivChatType channel, string prefixText, ushort? colour, List<Payload> payloadList)
     {
         var prefix = TextColoured(prefixText, colour ?? 557);
 
@@ -31,7 +31,7 @@ public class PrintMessage
         }
     }
 
-    public static void Chat(XivChatType channel, List<Payload> payloadList)
+    public static void Print(XivChatType channel, List<Payload> payloadList)
     {
         if (channel == XivChatType.None)
         {
@@ -61,12 +61,5 @@ public class PrintMessage
             new TextPayload(text),
             new UIForegroundPayload(0),
         };
-    }
-
-
-    // -------------------------------- [  toast  ] --------------------------------
-    public static void ToastNormal(string text)
-    {
-        Service.Toasts.ShowNormal(text);
     }
 }
