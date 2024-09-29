@@ -9,6 +9,7 @@
     <Version>1.8.0.3</Version>
     <LangVersion>latest</LangVersion>
     <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
     <TargetFramework>net8.0-windows</TargetFramework>
     <PackageProjectUrl>https://github.com/Elypha/Miosuke</PackageProjectUrl>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
