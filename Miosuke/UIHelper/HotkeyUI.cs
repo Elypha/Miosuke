@@ -14,9 +14,6 @@ public class HotkeyUi
     {
     }
 
-    public void Dispose()
-    {
-    }
 
     // -------------------------------- module --------------------------------
     public bool doSetInputFocused = false;

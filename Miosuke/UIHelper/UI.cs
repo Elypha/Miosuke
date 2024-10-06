@@ -18,8 +18,20 @@ public class Ui
     // colours
     public static readonly Vector4 ColourCyan = HslaToDecimal(200, 0.85, 0.6, 1.0);
     public static readonly Vector4 ColourRedLight = HslaToDecimal(5, 0.75, 0.6, 1.0);
-    public static readonly Vector4 ColourWhite = HslaToDecimal(0, 0, 1.0, 1.0);
     public static readonly Vector4 ColourKhaki = HslaToDecimal(25, 0.65, 0.75, 1.0);
+
+
+    // modifiers
+    public static readonly Vector4 ColourWhite = HslaToDecimal(0, 0, 1, 1);
+    public static readonly Vector4 ColourWhite2 = HslaToDecimal(0, 0, 0.95, 1);
+    public static readonly Vector4 ColourWhite3 = HslaToDecimal(0, 0, 0.90, 1);
+    public static readonly Vector4 ColourWhite4 = HslaToDecimal(0, 0, 0.85, 1);
+    public static readonly Vector4 Alpha = new(1, 1, 1, 0.5f);
+    public static readonly Vector4 Alpha2 = new(1, 1, 1, 0.65f);
+    public static readonly Vector4 Alpha3 = new(1, 1, 1, 0.80f);
+    public static readonly Vector4 Alpha4 = new(1, 1, 1, 0.95f);
+
+
 
     // ffxiv colours
     public static readonly Vector4 ColourHq = HslaToDecimal(45, 0.80, 0.70, 1.0);
