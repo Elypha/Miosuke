@@ -12,7 +12,7 @@ public static class Chat
 
     public static void PluginMessage(List<Payload> payloadList, ushort? prefixColourKey = null) =>
         PluginMessage(payloadList, MiosukeHelper.PluginNameShortPayload, prefixColourKey);
-    public static void PluginMessage(List<Payload> payloadList, DalamudLinkPayload? prefixPayload = null, ushort? prefixColourKey = null) =>
+    public static void PluginMessage(List<Payload> payloadList, DalamudLinkPayload? prefixPayload, ushort? prefixColourKey = null) =>
         PluginMessage(XivChatType.Debug, MiosukeHelper.PluginNameShort, payloadList, prefixPayload, prefixColourKey);
     public static void PluginMessage(XivChatType channel, string prefix, List<Payload> payloadList, DalamudLinkPayload? prefixPayload = null, ushort? prefixColourKey = null)
     {
