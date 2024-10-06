@@ -1,15 +1,11 @@
 using Dalamud.Game.ClientState.Keys;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-
 
 namespace Miosuke.Action;
 
 public static class Hotkey
 {
     private static readonly List<VirtualKey> ValidVirtualKeys = Service.KeyState.GetValidVirtualKeys().ToList();
-    public static IEnumerable<VirtualKey> ActiveKeys() { return ValidVirtualKeys.Where(vk => Service.KeyState[vk]); }
+    public static IEnumerable<VirtualKey> ActiveKeys() => ValidVirtualKeys.Where(vk => Service.KeyState[vk]);
 
     public static bool IsActive(VirtualKey[] keys, bool strict = false)
     {

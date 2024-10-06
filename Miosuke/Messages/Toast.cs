@@ -3,7 +3,7 @@ using Dalamud.Game.Gui.Toast;
 
 namespace Miosuke.Messages;
 
-public class Toast
+public static class Toast
 {
     public static void Normal(string text, ToastPosition position = ToastPosition.Top, ToastSpeed speed = ToastSpeed.Fast)
     {

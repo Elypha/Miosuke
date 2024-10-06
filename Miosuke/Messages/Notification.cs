@@ -5,8 +5,6 @@ namespace Miosuke.Messages;
 
 public static class Notice
 {
-    // ECommons
-
     public static void Success(string s) => Service.NotificationManager.AddNotification(new Notification()
     {
         Content = s,

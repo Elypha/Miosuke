@@ -1,20 +1,30 @@
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin;
 
 
 namespace Miosuke;
 
-public class MiosukeHelper
+public static class MiosukeHelper
 {
-    public IDalamudPlugin Plugin { get; private set; } = null!;
+    internal static IDalamudPlugin Plugin = null!;
+    internal static string PluginNameShort = "Miosuke";
+    internal static DalamudLinkPayload? PluginNameShortPayload = null;
 
-
-    public MiosukeHelper(IDalamudPluginInterface pluginInterface, IDalamudPlugin plugin)
+    public static void Init(
+        IDalamudPluginInterface pluginInterface,
+        IDalamudPlugin plugin,
+        string? pluginNameShort = null,
+        DalamudLinkPayload? pluginNameShortPayload = null
+    )
     {
-        pluginInterface.Create<Service>();
+        Service.Init(pluginInterface);
         Plugin = plugin;
-    }
 
-    public void Dispose()
+        if (pluginNameShort is not null) PluginNameShort = pluginNameShort;
+        if (pluginNameShortPayload is not null) PluginNameShortPayload = pluginNameShortPayload;
+    }
+    public static void Dispose()
     {
     }
+
 }

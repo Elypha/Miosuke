@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace Miosuke.Configuration;
 
-// ECommons
-
 public static class MioConfig
 {
     public static string? ConfigDirectoryOverride { get; set; } = null;

@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace Miosuke.UiHelper;
 
-public class Ui
+public static class Ui
 {
     // titles
     public static readonly Vector4 ColourTitle = HslaToDecimal(25, 0.75, 0.85, 1.0);

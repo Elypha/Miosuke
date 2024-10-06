@@ -1,9 +1,8 @@
 #pragma warning disable CS8618
 
-using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game;
 using Dalamud.IoC;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 namespace Miosuke;
@@ -49,4 +48,26 @@ public class Service
     [PluginService] public static INotificationManager NotificationManager { get; private set; }
     [PluginService] public static IContextMenu ContextMenu { get; private set; }
     [PluginService] public static IMarketBoard MarketBoard { get; private set; }
+
+
+
+    internal static bool IsInitialised = false;
+    public static void Init(IDalamudPluginInterface pluginInterface)
+    {
+        if (IsInitialised)
+        {
+            Service.Log.Warning("[Miosuke] Service: Already initialised");
+            return;
+        }
+
+        try
+        {
+            pluginInterface.Create<Service>();
+            IsInitialised = true;
+        }
+        catch (Exception ex)
+        {
+            Service.Log.Error($"[Miosuke] Service: Failed to initialise: {ex.Message}, {ex.StackTrace}");
+        }
+    }
 }
