@@ -56,7 +56,7 @@ public class HotkeyUi
         var hotkeyString = isEditingHotkey ? userHotkeyList.HotkeyToString() : hotkey.HotkeyToString();
         var buttonWidth = ImGui.CalcTextSize("Cancel").X + ImGui.GetStyle().FramePadding.X * 2;
         var inputWidth = width
-            - ImGui.GetStyle().ItemSpacing.X * 4
+            - ImGui.GetStyle().ItemSpacing.X
             - buttonWidth;
         DrawHotkeyInput(id, ref hotkeyString, inputWidth, out var isInputActive);
 
