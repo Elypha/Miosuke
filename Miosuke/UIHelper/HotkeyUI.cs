@@ -23,7 +23,7 @@ public class HotkeyUi
     public string userHotkeyString = "";
     public bool isHotkeyChanged = false;
 
-    public bool DrawConfigUi(string uniqueName, ref VirtualKey[] hotkey, uint inputWidth = 150)
+    public bool DrawConfigUi(string uniqueName, ref VirtualKey[] hotkey, float inputWidth = 150f)
     {
         // get user hotkey
         userHotkeyString = GetHotkeyString(hotkey);
@@ -123,7 +123,7 @@ public class HotkeyUi
         }
     }
 
-    private void DrawHotkeyInput(string uniqueName, uint inputWidth)
+    private void DrawHotkeyInput(string uniqueName, float inputWidth)
     {
         // set style
         if (isEditingHotkey)
