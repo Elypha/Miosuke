@@ -45,6 +45,10 @@ public static class Ui
 
     public static Vector4 Alpha = new(1, 1, 1, 0.55f);
     public static Vector4 Alpha2 = new(1, 1, 1, 0.45f);
+    public static Vector4 TransparentBackground = new(1, 1, 1, 0.95f);
+    public static Vector4 TransparentBackground2 = new(1, 1, 1, 0.85f);
+    public static Vector4 TransparentBackground3 = new(1, 1, 1, 0.80f);
+    public static Vector4 TransparentBackground4 = new(1, 1, 1, 0.70f);
     public static Vector4 Transparent = new(1, 1, 1, 0);
 
 
