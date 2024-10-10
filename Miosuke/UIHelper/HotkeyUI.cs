@@ -62,10 +62,10 @@ public class HotkeyUi
 
         // buttons and actions
         ImGui.SameLine();
-        ImGui.SetNextItemWidth(buttonWidth);
+        // ImGui.SetNextItemWidth(buttonWidth);
         if (!isEditingHotkey)
         {
-            if (ImGui.Button($"Edit"))
+            if (ImGui.Button($"Edit", new Vector2(buttonWidth, 0)))
             {
                 // start editing
                 isEditingHotkey = true;
@@ -77,7 +77,7 @@ public class HotkeyUi
             if (userHotkeyList.Count > 0)
             {
                 // save and stop editing
-                if (ImGui.Button($"Save"))
+                if (ImGui.Button($"Save", new Vector2(buttonWidth, 0)))
                 {
                     isEditingHotkey = false;
                     isHotkeyChanged = true;
@@ -87,7 +87,7 @@ public class HotkeyUi
             else
             {
                 // if no hotkey, show cancel button, cancel editing
-                if (ImGui.Button($"Cancel"))
+                if (ImGui.Button($"Cancel", new Vector2(buttonWidth, 0)))
                 {
                     isEditingHotkey = false;
                 }
