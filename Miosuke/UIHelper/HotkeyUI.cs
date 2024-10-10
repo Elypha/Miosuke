@@ -4,29 +4,23 @@ using ImGuiNET;
 using Miosuke.Action;
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Interface.Utility;
+using Miosuke.Extensions;
 
 
 namespace Miosuke.UiHelper;
 
 public class HotkeyUi
 {
-    public HotkeyUi()
-    {
-    }
-
-
-    // -------------------------------- module --------------------------------
     public bool doSetInputFocused = false;
     public bool isEditingHotkey = false;
-    public bool isInputActive = false;
     public List<VirtualKey> userHotkeyList = [];
-    public string userHotkeyString = "";
-    public bool isHotkeyChanged = false;
 
-    public bool DrawConfigUi(string uniqueName, ref VirtualKey[] hotkey, float inputWidth = 150f)
+    public bool DrawConfigUi(string id, ref VirtualKey[] hotkey, float width = 150f)
     {
-        // get user hotkey
-        userHotkeyString = GetHotkeyString(hotkey);
+        var imguiId = ImRaii.PushId(id);
+
+        var isHotkeyChanged = false;
 
         // update user hotkey from user input
         if (isEditingHotkey)
@@ -56,17 +50,22 @@ public class HotkeyUi
             }
 
             userHotkeyList.Sort();
-            userHotkeyString = GetHotkeyString(userHotkeyList);
         }
 
         // draw hotkey input bar
-        DrawHotkeyInput(uniqueName, inputWidth);
+        var hotkeyString = isEditingHotkey ? userHotkeyList.HotkeyToString() : hotkey.HotkeyToString();
+        var buttonWidth = ImGui.CalcTextSize("Cancel").X + ImGui.GetStyle().FramePadding.X * 2;
+        var inputWidth = width
+            - ImGui.GetStyle().ItemSpacing.X * 4
+            - buttonWidth;
+        DrawHotkeyInput(id, ref hotkeyString, inputWidth, out var isInputActive);
 
         // buttons and actions
         ImGui.SameLine();
+        ImGui.SetNextItemWidth(buttonWidth);
         if (!isEditingHotkey)
         {
-            if (ImGui.Button($"Edit##{uniqueName}-button-edit"))
+            if (ImGui.Button($"Edit"))
             {
                 // start editing
                 isEditingHotkey = true;
@@ -78,24 +77,35 @@ public class HotkeyUi
             if (userHotkeyList.Count > 0)
             {
                 // save and stop editing
-                if (ImGui.Button($"Save##{uniqueName}-button-save"))
+                if (ImGui.Button($"Save"))
                 {
                     isEditingHotkey = false;
-                    if (userHotkeyList.Count > 0)
-                    {
-                        isHotkeyChanged = true;
-                        hotkey = [.. userHotkeyList];
-                    }
+                    isHotkeyChanged = true;
+                    hotkey = [.. userHotkeyList];
                 }
             }
             else
             {
                 // if no hotkey, show cancel button, cancel editing
-                if (ImGui.Button($"Cancel##{uniqueName}-button-cancel"))
+                if (ImGui.Button($"Cancel"))
                 {
                     isEditingHotkey = false;
                 }
             }
+        }
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.BeginTooltip();
+            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35f);
+            ImGui.TextUnformatted(
+                "Click 'Edit' to set a new hotkey.\n" +
+                "During editing:\n" +
+                "- Press ESC on your keyboard to cancel.\n" +
+                "- Click 'Save' to save."
+            );
+            ImGui.PopTextWrapPos();
+            ImGui.EndTooltip();
         }
 
         // when editing, if buttons are not being clicked, and if input is not active, set focus
@@ -104,26 +114,12 @@ public class HotkeyUi
             doSetInputFocused = true;
         }
 
-        ImGui.SameLine();
-        ImGuiComponents.HelpMarker(
-            "Click 'Edit' to set a new hotkey.\n" +
-            "Click 'Save' or a blank area to save.\n" +
-            "Press ESC on your keyboard to cancel."
-        );
+        imguiId.Pop();
 
-        // if changed, return true
-        if (isHotkeyChanged)
-        {
-            isHotkeyChanged = false;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return isHotkeyChanged;
     }
 
-    private void DrawHotkeyInput(string uniqueName, float inputWidth)
+    private void DrawHotkeyInput(string id, ref string hotkeyString, float inputWidth, out bool isInputActive)
     {
         // set style
         if (isEditingHotkey)
@@ -133,7 +129,7 @@ public class HotkeyUi
         }
 
         ImGui.SetNextItemWidth(inputWidth);
-        ImGui.InputText($"##{uniqueName}-input-hotkey", ref userHotkeyString, 100, ImGuiInputTextFlags.ReadOnly);
+        ImGui.InputText($"##hotkeyString", ref hotkeyString, 100, ImGuiInputTextFlags.ReadOnly);
 
         // set focus when required
         if (doSetInputFocused)
@@ -149,10 +145,5 @@ public class HotkeyUi
             ImGui.PopStyleColor(1);
             ImGui.PopStyleVar();
         }
-    }
-
-    private static string GetHotkeyString(IEnumerable<VirtualKey> hotkey)
-    {
-        return string.Join("+", hotkey.Select(k => k.GetKeyName()));
     }
 }
