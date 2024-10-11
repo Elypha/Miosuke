@@ -42,19 +42,20 @@ public static class Ui
     public static readonly Vector4 ColourYellow = HslaToDecimal(50, 1, 0.90f);
     public static readonly Vector4 ColourMale = HslaToDecimal(200, 0.80, 0.60);
     public static readonly Vector4 ColourFemale = HslaToDecimal(340, 0.80, 0.70);
-    public static readonly Vector4 ColourGil = HslaToDecimal(35, 0.75, 0.40);
 
 
 
     public static readonly Vector4 ColourHq = HslaToDecimal(45, 0.80, 0.70);
+    public static readonly Vector4 ColourGil = HslaToDecimal(35, 0.75, 0.40);
+
 
 
     public static readonly Vector4 Alpha = new(1, 1, 1, 0.55f);
     public static readonly Vector4 Alpha2 = new(1, 1, 1, 0.45f);
-    public static readonly Vector4 TransparentBackground = new(1, 1, 1, 0.95f);
-    public static readonly Vector4 TransparentBackground2 = new(1, 1, 1, 0.85f);
-    public static readonly Vector4 TransparentBackground3 = new(1, 1, 1, 0.80f);
-    public static readonly Vector4 TransparentBackground4 = new(1, 1, 1, 0.70f);
+    public static readonly Vector4 AlphaLight = new(1, 1, 1, 0.95f);
+    public static readonly Vector4 AlphaLight2 = new(1, 1, 1, 0.85f);
+    public static readonly Vector4 AlphaLight3 = new(1, 1, 1, 0.80f);
+    public static readonly Vector4 AlphaLight4 = new(1, 1, 1, 0.70f);
     public static readonly Vector4 Transparent = new(1, 1, 1, 0);
 
 
@@ -68,9 +69,10 @@ public static class Ui
     public static readonly float ScrollbarSize = 7.0f;
     public static readonly float WindowRounding = 10.0f;
     public static readonly float WindowBorderSize = 3.0f;
-    public static (ImRaii.Style, ImRaii.Color) PushStyleCollection()
+    public static void PushStyleCollection(ref ImRaii.Style style, ref ImRaii.Color styleColour)
     {
-        var style = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, FramePadding)
+        style
+            .Push(ImGuiStyleVar.FramePadding, FramePadding)
             .Push(ImGuiStyleVar.ItemSpacing, ItemSpacing)
             .Push(ImGuiStyleVar.WindowPadding, WindowPadding)
             .Push(ImGuiStyleVar.FrameRounding, FrameRounding)
@@ -80,13 +82,13 @@ public static class Ui
             .Push(ImGuiStyleVar.WindowBorderSize, WindowBorderSize)
             .Push(ImGuiStyleVar.PopupRounding, WindowRounding * 0.5f)
             .Push(ImGuiStyleVar.PopupBorderSize, WindowBorderSize * 0.75f);
-        var styleColour = ImRaii.PushColor(ImGuiCol.Border, ColourAccentLight)
+        styleColour
+            .Push(ImGuiCol.Border, ColourAccentLight)
             .Push(ImGuiCol.ScrollbarGrab, ColourAccentDark)
             .Push(ImGuiCol.FrameBg, ColourBackground)
             .Push(ImGuiCol.FrameBgActive, ColourBackground)
             .Push(ImGuiCol.WindowBg, ColourBackground)
             .Push(ImGuiCol.PopupBg, ColourBackground1);
-        return (style, styleColour);
     }
 
 
