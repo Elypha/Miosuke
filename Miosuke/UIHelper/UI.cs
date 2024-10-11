@@ -22,7 +22,7 @@ public static class Ui
     public static readonly Vector4 ColourBackgroundAlt = HslaToDecimal(27, 0.45, 0.70);
     public static readonly Vector4 ColourForeground = HslaToDecimal(20, 0.35, 0.35);
     public static readonly Vector4 ColourForegroundComment = HslaToDecimal(25, 0.35, 0.50);
-    public static readonly Vector4 ColourInputHint = HslaToDecimal(35, 0.65, 0.25);
+    public static readonly Vector4 ColourInputHint = HslaToDecimal(35, 0.25, 0.65);
 
     public static readonly Vector4 ColourBlack = new(0, 0, 0, 1);
     public static readonly Vector4 ColourWhite = new(1, 1, 1, 1);
@@ -40,6 +40,10 @@ public static class Ui
     public static readonly Vector4 ColourKhaki = HslaToDecimal(25, 0.65, 0.75);
     public static readonly Vector4 ColourPink = HslaToDecimal(0, 1, 0.85f);
     public static readonly Vector4 ColourYellow = HslaToDecimal(50, 1, 0.90f);
+    public static readonly Vector4 ColourMale = HslaToDecimal(200, 0.80, 0.60);
+    public static readonly Vector4 ColourFemale = HslaToDecimal(340, 0.80, 0.70);
+    public static readonly Vector4 ColourGil = HslaToDecimal(35, 0.75, 0.40);
+
 
 
     public static readonly Vector4 ColourHq = HslaToDecimal(45, 0.80, 0.70);
