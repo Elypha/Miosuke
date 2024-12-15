@@ -65,5 +65,10 @@
       <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <!-- for WINDOWINFO on MS Windows -->
+    <Reference Include="PInvoke.User32">
+        <HintPath>$(DalamudLibPath)PInvoke.User32.dll</HintPath>
+        <Private>False</Private>
+    </Reference>
   </ItemGroup>
 </Project>
