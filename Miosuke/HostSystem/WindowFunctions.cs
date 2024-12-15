@@ -69,4 +69,9 @@ public static partial class WindowFunctions
         }
         return null;
     }
+
+    public static bool IsMinimised(IntPtr hwnd)
+    {
+        return IsIconic(hwnd);
+    }
 }
