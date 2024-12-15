@@ -10,6 +10,8 @@ public static class Chat
 
 
 
+    public static void PluginMessage(string message, ushort? prefixColourKey = null) =>
+        PluginMessage([new TextPayload(message)], prefixColourKey);
     public static void PluginMessage(List<Payload> payloadList, ushort? prefixColourKey = null) =>
         PluginMessage(payloadList, MiosukeHelper.PluginNameShortPayload, prefixColourKey);
     public static void PluginMessage(List<Payload> payloadList, DalamudLinkPayload? prefixPayload, ushort? prefixColourKey = null) =>
