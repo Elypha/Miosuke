@@ -1,19 +1,21 @@
 ﻿// ECommons/Interop/WindowFunctions.cs
 // --------------------------------
+using Miosuke.Messages;
 using PInvoke;
 using System;
+using System.Runtime.InteropServices;
+
 //using System.Windows.Forms;
 using static PInvoke.User32;
 
 namespace Miosuke.HostSystem;
 
-public static class WindowFunctions
+public static partial class WindowFunctions
 {
-    public const int SW_MINIMIZE = 6;
-    public const int SW_FORCEMINIMIZE = 11;
-    public const int SW_HIDE = 0;
-    public const int SW_SHOW = 5;
-    public const int SW_SHOWNA = 8;
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool IsIconic(IntPtr hWnd);
+
 
     public static bool TryFindGameWindow(out IntPtr hwnd)
     {
@@ -59,13 +61,12 @@ public static class WindowFunctions
         return SendKeypress((int)key);
     }*/
 
-    private static WINDOWINFO info = new();
-    public static bool IsMinimised()
+    public static bool? IsMinimised()
     {
-        if (TryFindGameWindow(out var hwnd) && User32.GetWindowInfo(hwnd, ref info))
+        if (TryFindGameWindow(out var hwnd))
         {
-            return ((WindowShowStyle)info.dwStyle).HasFlag(WindowShowStyle.SW_MINIMIZE);
+            return IsIconic(hwnd);
         }
-        return false;
+        return null;
     }
 }
