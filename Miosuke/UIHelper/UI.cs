@@ -128,7 +128,7 @@ public static class Ui
             {
                 if (uiForegroundPayload.IsEnabled)
                 {
-                    ImGui.PushStyleColor(ImGuiCol.Text, ColourUintToDecimal(uiForegroundPayload.UIColor.Value.Light));
+                    ImGui.PushStyleColor(ImGuiCol.Text, ColourUintToDecimal(uiForegroundPayload.UIColor.Value.Dark));
                 }
                 else
                 {
