@@ -1,6 +1,6 @@
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface.Components;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Miosuke.Action;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,7 @@ public class HotkeyUi
             if (ImGui.GetIO().KeyShift && !userHotkeyList.Contains(VirtualKey.SHIFT)) userHotkeyList.Add(VirtualKey.SHIFT);
             if (ImGui.GetIO().KeyCtrl && !userHotkeyList.Contains(VirtualKey.CONTROL)) userHotkeyList.Add(VirtualKey.CONTROL);
 
-            for (var i = 0; i < ImGui.GetIO().KeysDown.Count && i < 160; i++)
+            for (var i = 0; i < ImGui.GetIO().KeysDown.Length && i < 160; i++)
             {
                 if (ImGui.GetIO().KeysDown[i])
                 {

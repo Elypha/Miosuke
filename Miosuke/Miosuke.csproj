@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/12.0.2">
+<Project Sdk="Dalamud.NET.Sdk/13.0.0">
 
   <PropertyGroup>
     <Title>Miosuke</Title>
@@ -31,9 +31,9 @@
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <!-- for WINDOWINFO on MS Windows -->
-    <Reference Include="PInvoke.User32">
-        <HintPath>$(DalamudLibPath)PInvoke.User32.dll</HintPath>
-        <Private>False</Private>
+    <Reference Include="TerraFX.Interop.Windows">
+      <HintPath>$(DalamudLibPath)TerraFX.Interop.Windows.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
 </Project>

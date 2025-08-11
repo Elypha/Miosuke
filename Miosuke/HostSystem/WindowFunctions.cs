@@ -1,65 +1,113 @@
 ﻿// ECommons/Interop/WindowFunctions.cs
 // --------------------------------
-using Miosuke.Messages;
-using PInvoke;
-using System;
 using System.Runtime.InteropServices;
-
-//using System.Windows.Forms;
-using static PInvoke.User32;
+using System.Threading;
+using TerraFX.Interop.Windows;
 
 namespace Miosuke.HostSystem;
 
-public static partial class WindowFunctions
+public static unsafe class WindowFunctions
 {
-    [LibraryImport("user32.dll")]
+    public const int SW_MINIMIZE = 6;
+    public const int SW_FORCEMINIMIZE = 11;
+    public const int SW_HIDE = 0;
+    public const int SW_SHOW = 5;
+    public const int SW_SHOWNA = 8;
+
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+    private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int GetWindowThreadProcessId(IntPtr handle, out int processId);
+
+    [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static partial bool IsIconic(IntPtr hWnd);
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool IsIconic(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern HWND FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string lpszWindow);
 
 
-    public static bool TryFindGameWindow(out IntPtr hwnd)
+    private static readonly ushort* FFXIVClassNamePtr;
+    private static readonly Lock FFXIVClassNamePtrLock = new();
+    static WindowFunctions()
     {
-        hwnd = IntPtr.Zero;
-        while (true)
+        var str = "FFXIVGAME\0";
+        var size = str.Length * sizeof(char);
+        var ptr = Marshal.AllocHGlobal(size);
+        fixed (char* strPtr = str)
         {
-            hwnd = FindWindowEx(IntPtr.Zero, hwnd, "FFXIVGAME", null);
-            if (hwnd == IntPtr.Zero) break;
-            GetWindowThreadProcessId(hwnd, out var pid);
-            if (pid == Environment.ProcessId) break;
+            Buffer.MemoryCopy(strPtr, (void*)ptr, size, size);
         }
-        return hwnd != IntPtr.Zero;
+        FFXIVClassNamePtr = (ushort*)ptr;
     }
 
-    /// <summary>Returns true if the current application has focus, false otherwise</summary>
-    public static bool ApplicationIsActivated()
+    public static void UnLoad()
     {
-        var activatedHandle = GetForegroundWindow();
-        if (activatedHandle == IntPtr.Zero)
+        Marshal.FreeHGlobal((IntPtr)FFXIVClassNamePtr);
+    }
+
+
+    public static bool TryFindGameWindow(out HWND hwnd)
+    {
+        hwnd = HWND.NULL;
+        var prev = HWND.NULL;
+
+        while (true)
         {
-            return false;       // No window is currently activated
+            prev = TerraFX.Interop.Windows.Windows.FindWindowEx(HWND.NULL, prev, FFXIVClassNamePtr, null);
+            if (prev == HWND.NULL)
+                break;
+
+            uint pid;
+            _ = TerraFX.Interop.Windows.Windows.GetWindowThreadProcessId(prev, &pid);
+            if (pid == Environment.ProcessId)
+            {
+                hwnd = prev;
+                break;
+            }
         }
 
-        var procId = Environment.ProcessId;
-        GetWindowThreadProcessId(activatedHandle, out var activeProcId);
+        return hwnd != HWND.NULL;
+    }
+
+
+    public static bool ApplicationIsActivated()
+    {
+        var activatedHandle = TerraFX.Interop.Windows.Windows.GetForegroundWindow();
+        if (activatedHandle == HWND.NULL)
+        {
+            return false;
+        }
+
+        var procId = (uint)Environment.ProcessId;
+        uint activeProcId;
+        TerraFX.Interop.Windows.Windows.GetWindowThreadProcessId(activatedHandle, &activeProcId);
 
         return activeProcId == procId;
     }
+
 
     public static bool SendKeypress(int keycode)
     {
         if (TryFindGameWindow(out var hwnd))
         {
-            User32.SendMessage(hwnd, WindowMessage.WM_KEYDOWN, (IntPtr)keycode, (IntPtr)0);
-            User32.SendMessage(hwnd, WindowMessage.WM_KEYUP, (IntPtr)keycode, (IntPtr)0);
+            TerraFX.Interop.Windows.Windows.SendMessage(hwnd, WM.WM_KEYDOWN, (WPARAM)keycode, (LPARAM)0);
+            TerraFX.Interop.Windows.Windows.SendMessage(hwnd, WM.WM_KEYUP, (WPARAM)keycode, (LPARAM)0);
             return true;
         }
         return false;
     }
 
-    /*public static bool SendKeypress(Keys key)
-    {
-        return SendKeypress((int)key);
-    }*/
 
     public static bool? IsMinimised()
     {
