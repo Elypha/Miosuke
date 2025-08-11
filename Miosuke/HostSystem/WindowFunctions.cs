@@ -53,7 +53,10 @@ public static unsafe class WindowFunctions
 
     public static void UnLoad()
     {
-        Marshal.FreeHGlobal((IntPtr)FFXIVClassNamePtr);
+        if (FFXIVClassNamePtr != null)
+        {
+            Marshal.FreeHGlobal((IntPtr)FFXIVClassNamePtr);
+        }
     }
 
 
