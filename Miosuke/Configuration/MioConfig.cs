@@ -114,6 +114,7 @@ public static class MioConfig
         var path = MainConfigFile;
         var oldConfig = new FileInfo(oldConfigPath);
 
+        // move single file config to a config folder
         if (!File.Exists(path) && oldConfig.Exists)
         {
             Service.Log.Warning($"Migrating {oldConfig} into EzConfig system");
@@ -126,6 +127,8 @@ public static class MioConfig
         {
             Service.Log.Information($"Migrating conditions are not met, skipping...");
         }
+
+        // api 13: migrate int[] to vectors
     }
 
     internal static void Dispose()
