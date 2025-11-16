@@ -1,9 +1,10 @@
-using Miosuke.Messages;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Miosuke.Messages;
 
 namespace Miosuke.Configuration;
 
@@ -32,10 +33,9 @@ public static class MioConfig
 
     public static T Init<T>() where T : IMioConfig, new()
     {
-        // before load
+        // pre-init
         Directory.CreateDirectory(ConfigDirectory);
-
-        // load
+        // init
         Config = LoadConfiguration<T>(MainConfigFile);
         return (T)Config;
     }
@@ -45,13 +45,13 @@ public static class MioConfig
         if (Config != null) Save(Config, MainConfigFile, false);
     }
 
-    public static void Save(this IMioConfig config, string? path = null, bool isRelativePath = true, bool prettyPrint = true, bool async = true)
+    public static void Save(this IMioConfig config, string? path = null, bool isRelativePath = true, bool async = true)
     {
         path ??= MainConfigFileName;
         if (isRelativePath) path = Path.Combine(ConfigDirectory, path);
 
         OnSave?.Invoke();
-        var serialized = configIo.Serialize(config, prettyPrint);
+        var jsonUtf8Bytes = configIo.Serialize(config);
 
         void Write()
         {
@@ -68,7 +68,7 @@ public static class MioConfig
                         File.Move(tempConfig, saveTo);
                         Service.Log.Warning($"Success. Please manually check {saveTo} file contents.");
                     }
-                    File.WriteAllText(tempConfig, serialized, Encoding.UTF8);
+                    File.WriteAllBytes(tempConfig, jsonUtf8Bytes);
                     File.Move(tempConfig, path, true);
                 }
             }
@@ -79,23 +79,27 @@ public static class MioConfig
         }
 
         if (async)
-        {
             Task.Run(Write);
-        }
         else
-        {
             Write();
-        }
     }
 
     private static T LoadConfiguration<T>(string path, bool isPathRelative = true) where T : IMioConfig, new()
     {
         if (isPathRelative) path = Path.Combine(ConfigDirectory, path);
-        if (!File.Exists(path))
+        if (!File.Exists(path)) return new T();
+
+        try
         {
+            // this should never return null, but just in case
+            return configIo.Deserialize<T>(File.ReadAllBytes(path)) ?? new T();
+        }
+        catch (Exception e)
+        {
+            Service.Log.Error(e, $"Config file {path} is corrupted or has invalid format. Loading default configuration.");
+            Notice.Error($"Config file is corrupted or has invalid format. Loading default configuration.");
             return new T();
         }
-        return configIo.Deserialize<T>(File.ReadAllText(path, Encoding.UTF8)) ?? new T();
     }
 
     /// <summary>
@@ -148,22 +152,20 @@ public interface IMioConfig
 
 public class ConfigIo
 {
-    public virtual T? Deserialize<T>(string s)
+    private readonly JsonSerializerOptions deserializeOptions = new()
     {
-        var settings = new JsonSerializerSettings()
-        {
-            ObjectCreationHandling = ObjectCreationHandling.Replace,
-        };
-        return JsonConvert.DeserializeObject<T>(s, settings);
-    }
+        IncludeFields = true,
+        PropertyNameCaseInsensitive = true,
+        PreferredObjectCreationHandling = JsonObjectCreationHandling.Replace,
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip,
+    };
+    private readonly JsonSerializerOptions serializeOptions = new()
+    {
+        IncludeFields = true,
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+    };
 
-    public virtual string Serialize(object config, bool prettyPrint, bool ignoreDefaultValues = true)
-    {
-        var settings = new JsonSerializerSettings()
-        {
-            Formatting = prettyPrint ? Formatting.Indented : Formatting.None,
-            DefaultValueHandling = ignoreDefaultValues ? DefaultValueHandling.Ignore : DefaultValueHandling.Include
-        };
-        return JsonConvert.SerializeObject(config, settings);
-    }
+    public virtual T? Deserialize<T>(ReadOnlySpan<byte> utf8Json) => JsonSerializer.Deserialize<T>(utf8Json, deserializeOptions);
+    public virtual byte[] Serialize(object config) => JsonSerializer.SerializeToUtf8Bytes(config, serializeOptions);
 }
