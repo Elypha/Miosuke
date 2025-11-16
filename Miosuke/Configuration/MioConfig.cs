@@ -89,6 +89,9 @@ public static class MioConfig
         if (isPathRelative) path = Path.Combine(ConfigDirectory, path);
         if (!File.Exists(path)) return new T();
 
+        // migration: if is utf8 with BOM, remove BOM
+        CheckAndRemoveUtf8Bom(path);
+
         try
         {
             // this should never return null, but just in case
@@ -133,6 +136,31 @@ public static class MioConfig
         }
 
         // api 13: migrate int[] to vectors
+    }
+
+    private static void CheckAndRemoveUtf8Bom(string path)
+    {
+        var bom = Encoding.UTF8.GetPreamble();
+        var fileBytes = File.ReadAllBytes(path);
+        if (fileBytes.Length >= bom.Length)
+        {
+            var hasBom = true;
+            for (var i = 0; i < bom.Length; i++)
+            {
+                if (fileBytes[i] != bom[i])
+                {
+                    hasBom = false;
+                    break;
+                }
+            }
+            if (hasBom)
+            {
+                var newBytes = new byte[fileBytes.Length - bom.Length];
+                Array.Copy(fileBytes, bom.Length, newBytes, 0, newBytes.Length);
+                File.WriteAllBytes(path, newBytes);
+                Service.Log.Info($"Removed UTF-8 BOM from config file {path}");
+            }
+        }
     }
 
     internal static void Dispose()
