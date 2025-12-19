@@ -1,7 +1,6 @@
 ﻿// ECommons/Interop/WindowFunctions.cs
 // --------------------------------
 using System.Runtime.InteropServices;
-using System.Threading;
 using TerraFX.Interop.Windows;
 
 namespace Miosuke.HostSystem;
@@ -34,55 +33,21 @@ public static unsafe class WindowFunctions
     private static extern bool IsIconic(IntPtr hWnd);
 
     [DllImport("user32.dll")]
-    private static extern HWND FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string lpszWindow);
+    private static extern IntPtr FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string? lpszWindow);
 
 
-    private static readonly ushort* FFXIVClassNamePtr;
-    private static readonly Lock FFXIVClassNamePtrLock = new();
-    static WindowFunctions()
+    public static bool TryFindGameWindow(out IntPtr hwnd)
     {
-        var str = "FFXIVGAME\0";
-        var size = str.Length * sizeof(char);
-        var ptr = Marshal.AllocHGlobal(size);
-        fixed (char* strPtr = str)
-        {
-            Buffer.MemoryCopy(strPtr, (void*)ptr, size, size);
-        }
-        FFXIVClassNamePtr = (ushort*)ptr;
-    }
-
-    public static void UnLoad()
-    {
-        if (FFXIVClassNamePtr != null)
-        {
-            Marshal.FreeHGlobal((IntPtr)FFXIVClassNamePtr);
-        }
-    }
-
-
-    public static bool TryFindGameWindow(out HWND hwnd)
-    {
-        hwnd = HWND.NULL;
-        var prev = HWND.NULL;
-
+        hwnd = IntPtr.Zero;
         while (true)
         {
-            prev = TerraFX.Interop.Windows.Windows.FindWindowEx(HWND.NULL, prev, FFXIVClassNamePtr, null);
-            if (prev == HWND.NULL)
-                break;
-
-            uint pid;
-            _ = TerraFX.Interop.Windows.Windows.GetWindowThreadProcessId(prev, &pid);
-            if (pid == Environment.ProcessId)
-            {
-                hwnd = prev;
-                break;
-            }
+            hwnd = FindWindowEx(IntPtr.Zero, hwnd, "FFXIVGAME", null);
+            if (hwnd == IntPtr.Zero) break;
+            GetWindowThreadProcessId(hwnd, out var pid);
+            if (pid == Environment.ProcessId) break;
         }
-
-        return hwnd != HWND.NULL;
+        return hwnd != IntPtr.Zero;
     }
-
 
     public static bool ApplicationIsActivated()
     {
@@ -104,8 +69,8 @@ public static unsafe class WindowFunctions
     {
         if (TryFindGameWindow(out var hwnd))
         {
-            TerraFX.Interop.Windows.Windows.SendMessage(hwnd, WM.WM_KEYDOWN, (WPARAM)keycode, (LPARAM)0);
-            TerraFX.Interop.Windows.Windows.SendMessage(hwnd, WM.WM_KEYUP, (WPARAM)keycode, (LPARAM)0);
+            TerraFX.Interop.Windows.Windows.SendMessage((HWND)hwnd, WM.WM_KEYDOWN, (WPARAM)keycode, (LPARAM)0);
+            TerraFX.Interop.Windows.Windows.SendMessage((HWND)hwnd, WM.WM_KEYUP, (WPARAM)keycode, (LPARAM)0);
             return true;
         }
         return false;

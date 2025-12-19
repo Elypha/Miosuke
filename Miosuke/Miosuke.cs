@@ -25,7 +25,6 @@ public static class MiosukeHelper
     }
     public static void Dispose()
     {
-        HostSystem.WindowFunctions.UnLoad();
     }
 
 }
