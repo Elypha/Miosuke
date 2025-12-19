@@ -48,7 +48,9 @@ public class Service
     [PluginService] public static INotificationManager NotificationManager { get; private set; }
     [PluginService] public static IContextMenu ContextMenu { get; private set; }
     [PluginService] public static IMarketBoard MarketBoard { get; private set; }
-
+    [PluginService] public static IPlayerState PlayerState { get; private set; }
+    // [PluginService] public static IUnlockState UnlockState { get; private set; }
+    // [PluginService] public static IReliableFileStorage ReliableFileStorage { get; private set; }
 
 
     internal static bool IsInitialised = false;
