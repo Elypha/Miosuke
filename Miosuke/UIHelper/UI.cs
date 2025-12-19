@@ -96,6 +96,38 @@ public static class Ui
 
 
 
+    // UI COMPONENTS
+
+    public static void TextUrlWithLabelButton(string url)
+    {
+        ImGui.Text(url);
+
+        ImGui.SameLine();
+        if (ImGui.SmallButton($"Copy"))
+        {
+            ImGui.SetClipboardText(url);
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip("Copy to clipboard");
+        }
+
+        ImGui.SameLine();
+        if (ImGui.SmallButton($"Open"))
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true,
+            });
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip("Open in browser");
+        }
+    }
+
+
     // IMGUI SHORTCUTS
 
     public static void AlignRight(string text)
