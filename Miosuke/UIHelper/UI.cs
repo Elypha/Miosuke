@@ -69,7 +69,7 @@ public static class Ui
     public static readonly float ScrollbarSize = 7.0f;
     public static readonly float WindowRounding = 10.0f;
     public static readonly float WindowBorderSize = 3.0f;
-    public static void PushStyleCollection(ref ImRaii.Style style, ref ImRaii.Color styleColour)
+    public static void PushStyleCollection(ref ImRaii.StyleDisposable style, ref ImRaii.ColorDisposable styleColour)
     {
         style
             .Push(ImGuiStyleVar.FramePadding, FramePadding)
