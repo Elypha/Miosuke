@@ -1,4 +1,4 @@
-﻿// ECommons/Interop/WindowFunctions.cs
+// ECommons/Interop/WindowFunctions.cs
 // --------------------------------
 using System.Runtime.InteropServices;
 using TerraFX.Interop.Windows;
