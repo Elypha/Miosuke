@@ -1,6 +1,5 @@
 using Dalamud.Game.Gui.Toast;
 
-
 namespace Miosuke.Messages;
 
 public static class Toast

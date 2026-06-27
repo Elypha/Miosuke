@@ -1,6 +1,5 @@
 using Dalamud.Interface.ImGuiNotification;
 
-
 namespace Miosuke.Messages;
 
 public static class Notice
