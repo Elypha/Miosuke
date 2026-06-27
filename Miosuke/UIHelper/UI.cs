@@ -1,14 +1,12 @@
-#pragma warning disable CA2211 // Non-constant fields should not be visible
-
-using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 
 namespace Miosuke.UiHelper;
 
 public static class Ui
 {
-    // COLOUR
-
+    // colours
+    // --------------------------------
     public static readonly Vector4 ColourAccentDark = HslaToDecimal(25, 0.45, 0.25);
     public static readonly Vector4 ColourAccentLight = HslaToDecimal(35, 0.75, 0.85);
     public static readonly Vector4 ColourAccentLightAlt = HslaToDecimal(25, 0.75, 0.85);
@@ -43,12 +41,8 @@ public static class Ui
     public static readonly Vector4 ColourMale = HslaToDecimal(200, 0.80, 0.60);
     public static readonly Vector4 ColourFemale = HslaToDecimal(340, 0.80, 0.70);
 
-
-
     public static readonly Vector4 ColourHq = HslaToDecimal(45, 0.80, 0.70);
     public static readonly Vector4 ColourGil = HslaToDecimal(35, 0.75, 0.40);
-
-
 
     public static readonly Vector4 Alpha = new(1, 1, 1, 0.55f);
     public static readonly Vector4 Alpha2 = new(1, 1, 1, 0.45f);
@@ -58,9 +52,8 @@ public static class Ui
     public static readonly Vector4 AlphaLight4 = new(1, 1, 1, 0.70f);
     public static readonly Vector4 Transparent = new(1, 1, 1, 0);
 
-
-    // STYLE
-
+    // style
+    // --------------------------------
     public static readonly Vector2 FramePadding = new(8f, 8f);
     public static readonly Vector2 ItemSpacing = new(6f, 6f);
     public static readonly Vector2 WindowPadding = new(5f, 5f);
@@ -69,6 +62,7 @@ public static class Ui
     public static readonly float ScrollbarSize = 7.0f;
     public static readonly float WindowRounding = 10.0f;
     public static readonly float WindowBorderSize = 3.0f;
+
     public static void PushStyleCollection(ref ImRaii.StyleDisposable style, ref ImRaii.ColorDisposable styleColour)
     {
         style
@@ -91,45 +85,130 @@ public static class Ui
             .Push(ImGuiCol.PopupBg, ColourBackground1);
     }
 
-
-
-
-
-
-    // UI COMPONENTS
-
-    public static void TextUrlWithLabelButton(string url)
+    // ui components
+    // --------------------------------
+    public static bool InlineActionButton(string label, string? tooltip = null)
     {
-        ImGui.Text(url);
+        var clicked = ImGui.SmallButton(label);
 
-        ImGui.SameLine();
-        if (ImGui.SmallButton($"Copy"))
+        if (!string.IsNullOrWhiteSpace(tooltip) && ImGui.IsItemHovered())
         {
-            ImGui.SetClipboardText(url);
-        }
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("Copy to clipboard");
+            ImGui.SetTooltip(tooltip);
         }
 
+        return clicked;
+    }
+
+    public static void SameLineInlineActionButton(string label, Action action, string? tooltip = null)
+    {
         ImGui.SameLine();
-        if (ImGui.SmallButton($"Open"))
+        if (InlineActionButton(label, tooltip))
+        {
+            action();
+        }
+    }
+
+    public static void SameLineInlineCopyActionButton(string text, string? id = null)
+    {
+        var suffix = id ?? text;
+        SameLineInlineActionButton($"Copy##CopyText:{suffix}", () => ImGui.SetClipboardText(text), "Copy to clipboard");
+    }
+
+    public static void SameLineInlineOpenUrlActionButton(string url, string? id = null)
+    {
+        var suffix = id ?? url;
+        SameLineInlineActionButton($"Open##OpenUrl:{suffix}", () =>
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
                 FileName = url,
                 UseShellExecute = true,
             });
-        }
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("Open in browser");
-        }
+        }, "Open in browser");
     }
 
+    public static void TextUrlWithInlineActionButtons(string url)
+    {
+        ImGui.TextUnformatted(url);
+        SameLineInlineCopyActionButton(url);
+        SameLineInlineOpenUrlActionButton(url);
+    }
 
-    // IMGUI SHORTCUTS
+    public static void DrawQuotedBlock(Action drawContent)
+    {
+        const float indent = 16f;
+        const float lineOffset = 5f;
+        var start = ImGui.GetCursorScreenPos();
+        var cursorX = ImGui.GetCursorPosX();
 
+        ImGui.SetCursorPosX(cursorX + indent);
+        ImGui.BeginGroup();
+        drawContent();
+        ImGui.EndGroup();
+
+        var end = ImGui.GetItemRectMax();
+        var lineX = start.X + lineOffset;
+        ImGui.GetWindowDrawList().AddLine(
+            new Vector2(lineX, start.Y + 1f),
+            new Vector2(lineX, end.Y - 1f),
+            ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0.22f)),
+            2f);
+
+        var cursorY = ImGui.GetCursorPosY();
+        ImGui.SetCursorPosX(cursorX);
+        ImGui.SetCursorPosY(cursorY + (0.65f * ImGui.GetTextLineHeight()));
+    }
+
+    public static void DrawAccentTextBlock(
+        string? title,
+        string body,
+        Vector4 accentColour,
+        string? accentTooltip = null,
+        Vector4? bodyColour = null)
+    {
+        const float lineWidth = 5f;
+        const float indent = 14f;
+        const float lineOffset = 2f;
+        var start = ImGui.GetCursorScreenPos();
+        var cursorX = ImGui.GetCursorPosX();
+
+        ImGui.SetCursorPosX(cursorX + indent);
+        ImGui.BeginGroup();
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            ImGui.TextColored(accentColour, title);
+        }
+
+        if (!string.IsNullOrWhiteSpace(body))
+        {
+            using var textColour = ImRaii.PushColor(ImGuiCol.Text, bodyColour.GetValueOrDefault(), bodyColour.HasValue);
+            ImGui.TextWrapped(body);
+        }
+
+        ImGui.EndGroup();
+
+        var end = ImGui.GetItemRectMax();
+        var lineMin = new Vector2(start.X + lineOffset, start.Y + 1f);
+        var lineMax = new Vector2(lineMin.X + lineWidth, end.Y - 1f);
+        ImGui.GetWindowDrawList().AddRectFilled(
+            lineMin,
+            lineMax,
+            ImGui.GetColorU32(accentColour),
+            lineWidth * 0.45f);
+        var hoverMin = lineMin - new Vector2(1f, 1f);
+        var hoverMax = lineMax + new Vector2(3f, 1f);
+        if (!string.IsNullOrWhiteSpace(accentTooltip)
+            && ImGui.IsMouseHoveringRect(hoverMin, hoverMax, false))
+        {
+            ImGui.SetTooltip(accentTooltip);
+        }
+
+        ImGui.SetCursorPosX(cursorX);
+        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (0.45f * ImGui.GetTextLineHeight()));
+    }
+
+    // imgui shortcuts
+    // --------------------------------
     public static void AlignRight(string text)
     {
         var posX = ImGui.GetCursorPosX()
@@ -140,9 +219,8 @@ public static class Ui
         ImGui.SetCursorPosX(posX);
     }
 
-
-    // FFXIV HELPERS
-
+    // ffxiv helpers
+    // --------------------------------
     public static void RenderSeString(SeString seString)
     {
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetStyle().ItemSpacing.X);
@@ -152,8 +230,8 @@ public static class Ui
             {
                 ImGui.SetCursorPosX(ImGui.GetCursorPosX() - ImGui.GetStyle().ItemSpacing.X);
                 // show \n as plain text
-                var plain_text = textPayload.Text?.Replace("\n", "\\n");
-                ImGui.Text(plain_text);
+                var plainText = textPayload.Text?.Replace("\n", "\\n");
+                ImGui.Text(plainText);
                 ImGui.SameLine();
             }
             else if (payload is UIForegroundPayload uiForegroundPayload)
@@ -180,9 +258,8 @@ public static class Ui
         return new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
     }
 
-
-    // COLOUR
-
+    // colour conversion
+    // --------------------------------
     /// <summary>
     /// (255, 255, 255, 1) -> (1, 1, 1, 1)
     /// </summary>
@@ -205,31 +282,23 @@ public static class Ui
     /// </summary>
     public static Vector4 HslaToRgba(double h, double s, double l, double a = 1.0)
     {
-        double v;
-        double r, g, b;
-
         h /= 360.0;
 
-        r = l;   // default to gray
-        g = l;
-        b = l;
-        v = (l <= 0.5) ? (l * (1.0 + s)) : (l + s - l * s);
+        var r = l; // default to gray
+        var g = l;
+        var b = l;
+        var v = (l <= 0.5) ? (l * (1.0 + s)) : (l + s - l * s);
 
         if (v > 0)
         {
-            double m;
-            double sv;
-            int sextant;
-            double fract, vsf, mid1, mid2;
-
-            m = l + l - v;
-            sv = (v - m) / v;
+            var m = l + l - v;
+            var sv = (v - m) / v;
             h *= 6.0;
-            sextant = (int)h;
-            fract = h - sextant;
-            vsf = v * sv * fract;
-            mid1 = m + vsf;
-            mid2 = v - vsf;
+            var sextant = (int)h;
+            var fract = h - sextant;
+            var vsf = v * sv * fract;
+            var mid1 = m + vsf;
+            var mid2 = v - vsf;
 
             switch (sextant)
             {
@@ -265,6 +334,7 @@ public static class Ui
                     break;
             }
         }
+
         return new Vector4((float)r * 255, (float)g * 255, (float)b * 255, (float)a);
     }
 }
