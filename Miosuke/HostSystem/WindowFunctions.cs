@@ -1,5 +1,6 @@
 // ECommons/Interop/WindowFunctions.cs
 // --------------------------------
+
 using System.Runtime.InteropServices;
 using TerraFX.Interop.Windows;
 
@@ -12,7 +13,6 @@ public static unsafe class WindowFunctions
     public const int SW_HIDE = 0;
     public const int SW_SHOW = 5;
     public const int SW_SHOWNA = 8;
-
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
     private static extern IntPtr GetForegroundWindow();
@@ -35,7 +35,6 @@ public static unsafe class WindowFunctions
     [DllImport("user32.dll")]
     private static extern IntPtr FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string? lpszWindow);
 
-
     public static bool TryFindGameWindow(out IntPtr hwnd)
     {
         hwnd = IntPtr.Zero;
@@ -46,16 +45,14 @@ public static unsafe class WindowFunctions
             GetWindowThreadProcessId(hwnd, out var pid);
             if (pid == Environment.ProcessId) break;
         }
+
         return hwnd != IntPtr.Zero;
     }
 
     public static bool ApplicationIsActivated()
     {
         var activatedHandle = TerraFX.Interop.Windows.Windows.GetForegroundWindow();
-        if (activatedHandle == HWND.NULL)
-        {
-            return false;
-        }
+        if (activatedHandle == HWND.NULL) return false;
 
         var procId = (uint)Environment.ProcessId;
         uint activeProcId;
@@ -63,7 +60,6 @@ public static unsafe class WindowFunctions
 
         return activeProcId == procId;
     }
-
 
     public static bool SendKeypress(int keycode)
     {
@@ -73,21 +69,13 @@ public static unsafe class WindowFunctions
             TerraFX.Interop.Windows.Windows.SendMessage((HWND)hwnd, WM.WM_KEYUP, (WPARAM)keycode, (LPARAM)0);
             return true;
         }
+
         return false;
     }
 
+    public static bool? IsMinimised() => TryFindGameWindow(out var hwnd)
+        ? IsIconic(hwnd)
+        : null;
 
-    public static bool? IsMinimised()
-    {
-        if (TryFindGameWindow(out var hwnd))
-        {
-            return IsIconic(hwnd);
-        }
-        return null;
-    }
-
-    public static bool IsMinimised(IntPtr hwnd)
-    {
-        return IsIconic(hwnd);
-    }
+    public static bool IsMinimised(IntPtr hwnd) => IsIconic(hwnd);
 }

@@ -1,7 +1,6 @@
 using Dalamud.Game.ClientState.Keys;
-using Miosuke.Extensions;
 
-namespace Miosuke.Action;
+namespace Miosuke.UserActions;
 
 public static class Hotkey
 {
@@ -16,14 +15,8 @@ public static class Hotkey
             if (!Service.KeyState.IsVirtualKeyValid(vk)) continue;
             if (!Service.KeyState[vk]) return false;
         }
+
         // if strict, check if all active keys are in the list
-        if (strict)
-        {
-            foreach (var vk in ActiveKeys())
-            {
-                if (!keys.Contains(vk)) return false;
-            }
-        }
-        return true;
+        return !strict || ActiveKeys().All(vk => keys.Contains(vk));
     }
 }

@@ -1,7 +1,5 @@
 #pragma warning disable CS8618
 
-using Dalamud.Game.ClientState.Objects;
-using Dalamud.Game;
 using Dalamud.IoC;
 using Dalamud.Plugin.Services;
 
@@ -9,6 +7,8 @@ namespace Miosuke;
 
 public class Service
 {
+    // services
+    // --------------------------------
     // TextureProvider > Texture
     // PluginLog > Log
     [PluginService] public static IDalamudPluginInterface PluginInterface { get; private set; }
@@ -52,13 +52,15 @@ public class Service
     // [PluginService] public static IUnlockState UnlockState { get; private set; }
     // [PluginService] public static IReliableFileStorage ReliableFileStorage { get; private set; }
 
+    // lifecycle
+    // --------------------------------
+    internal static bool IsInitialised;
 
-    internal static bool IsInitialised = false;
     public static void Init(IDalamudPluginInterface pluginInterface)
     {
         if (IsInitialised)
         {
-            Service.Log.Warning("[Miosuke] Service: Already initialised");
+            Service.Log.Debug("[Miosuke] Service: Already initialised");
             return;
         }
 

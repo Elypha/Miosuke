@@ -1,25 +1,27 @@
-using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 
 namespace Miosuke.Messages;
 
 public static class Chat
 {
-    private static readonly ushort orangeColourKey = 557;
-
-
+    private static readonly ushort OrangeColourKey = 557;
 
     public static void PluginMessage(string message, ushort? prefixColourKey = null) =>
         PluginMessage([new TextPayload(message)], prefixColourKey);
+
     public static void PluginMessage(List<Payload> payloadList, ushort? prefixColourKey = null) =>
         PluginMessage(payloadList, MiosukeHelper.PluginNameShortPayload, prefixColourKey);
+
     public static void PluginMessage(List<Payload> payloadList, DalamudLinkPayload? prefixPayload, ushort? prefixColourKey = null) =>
         PluginMessage(XivChatType.Debug, MiosukeHelper.PluginNameShort, payloadList, prefixPayload, prefixColourKey);
+
     public static void PluginMessage(XivChatType channel, string prefix, List<Payload> payloadList, DalamudLinkPayload? prefixPayload = null, ushort? prefixColourKey = null)
     {
-        var payloads = new List<Payload> {
-            new UIForegroundPayload(prefixColourKey ?? orangeColourKey),
+        var payloads = new List<Payload>
+        {
+            new UIForegroundPayload(prefixColourKey ?? OrangeColourKey),
             new TextPayload(prefix),
             new UIForegroundPayload(0),
         };
